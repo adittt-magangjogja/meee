@@ -1,104 +1,172 @@
-// Theme Toggle
+
+const FORM_URL = 'https://formspree.io/f/xqpejazp';
+
+// THEME TOGGLE
 const themeToggle = document.getElementById('themeToggle');
 const html = document.documentElement;
 
-// Check saved theme or default to light
 const currentTheme = localStorage.getItem('theme') || 'light';
 html.setAttribute('data-theme', currentTheme);
-updateThemeIcon(currentTheme);
-
-themeToggle.addEventListener('click', () => {
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-});
 
 function updateThemeIcon(theme) {
+    if (!themeToggle) return;
+
     const icon = themeToggle.querySelector('i');
-    if (theme === 'dark') {
-        icon.classList.remove('fa-moon');
-        icon.classList.add('fa-sun');
-    } else {
-        icon.classList.remove('fa-sun');
-        icon.classList.add('fa-moon');
-    }
+    if (!icon) return;
+
+    icon.classList.toggle('fa-sun', theme === 'dark');
+    icon.classList.toggle('fa-moon', theme !== 'dark');
 }
 
-// Contact form validation (client-side)
+updateThemeIcon(currentTheme);
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateThemeIcon(next);
+    });
+}
+
+// CONTACT FORM + VALIDASI + KIRIM PESAN
 const contactForm = document.getElementById('contactForm');
+
 if (contactForm) {
     const formSuccess = document.getElementById('formSuccess');
     const nama = document.getElementById('nama');
     const email = document.getElementById('email');
     const subjek = document.getElementById('subjek');
     const pesan = document.getElementById('pesan');
+    const btn = contactForm.querySelector('.btn-submit');
 
-    contactForm.addEventListener('submit', (event) => {
+    function setInvalid(field, invalid) {
+        const group = field.closest('.form-group');
+        if (group) group.classList.toggle('invalid', invalid);
+    }
+
+    contactForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        formSuccess.classList.remove('show');
+
+        if (formSuccess) {
+            formSuccess.classList.remove('show');
+            formSuccess.textContent = '';
+        }
+
+        const emailValid =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
 
         const checks = [
-            [nama, nama.value.trim().length > 0],
-            [email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())],
-            [subjek, subjek.value.trim().length > 0],
-            [pesan, pesan.value.trim().length > 0]
+            [nama, nama.value.trim() !== ''],
+            [email, emailValid],
+            [subjek, subjek.value.trim() !== ''],
+            [pesan, pesan.value.trim() !== '']
         ];
 
         checks.forEach(([field, valid]) => {
-            field.closest('.form-group').classList.toggle('invalid', !valid);
+            setInvalid(field, !valid);
         });
 
-        if (checks.every(([, valid]) => valid)) {
-            formSuccess.classList.add('show');
+        if (!checks.every(([, valid]) => valid)) return;
+
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Mengirim...';
+        }
+
+        try {
+            const response = await fetch(FORM_URL, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json'
+                },
+                body: new FormData(contactForm)
+            });
+
+            if (!response.ok) {
+                throw new Error('Pesan gagal dikirim');
+            }
+
+            if (formSuccess) {
+                formSuccess.textContent =
+                    'Pesan berhasil dikirim. Terima kasih!';
+                formSuccess.classList.add('show');
+            }
+
             contactForm.reset();
+
+            checks.forEach(([field]) => setInvalid(field, false));
+
+        } catch (error) {
+            if (formSuccess) {
+                formSuccess.textContent =
+                    'Pesan gagal dikirim. Coba lagi nanti.';
+                formSuccess.classList.add('show');
+            }
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Kirim Pesan';
+            }
         }
     });
 
     contactForm.querySelectorAll('input, textarea').forEach((field) => {
         field.addEventListener('input', () => {
-            field.closest('.form-group').classList.remove('invalid');
-            formSuccess.classList.remove('show');
+            setInvalid(field, false);
+
+            if (formSuccess) {
+                formSuccess.classList.remove('show');
+            }
         });
     });
 }
 
-// Mobile Menu Toggle
-const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+// MOBILE MENU
+const mobileMenuToggle =
+    document.getElementById('mobileMenuToggle');
 const navLinks = document.querySelector('.nav-links');
 
-mobileMenuToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-    const icon = mobileMenuToggle.querySelector('i');
-    if (navLinks.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
-    } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-    }
-});
+if (mobileMenuToggle && navLinks) {
+    mobileMenuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
 
-// Close mobile menu when clicking a link
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-            navLinks.classList.remove('active');
-            const icon = mobileMenuToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
+        const icon = mobileMenuToggle.querySelector('i');
+
+        if (icon) {
+            const isOpen = navLinks.classList.contains('active');
+            icon.classList.toggle('fa-times', isOpen);
+            icon.classList.toggle('fa-bars', !isOpen);
         }
     });
-});
 
-// Smooth Scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+    document.querySelectorAll('.nav-links a').forEach((link) => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                navLinks.classList.remove('active');
+
+                const icon = mobileMenuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+    });
+}
+
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', (event) => {
+        const href = anchor.getAttribute('href');
+
+        if (!href || href === '#') return;
+
+        const target = document.querySelector(href);
         if (target) {
+            event.preventDefault();
             target.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start'
@@ -107,25 +175,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Scroll Animation
+// SCROLL ANIMATION
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'
 };
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
+if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
-// Apply animation to sections (kecuali hero agar langsung fade-in saat load)
-document.querySelectorAll('section:not(.hero)').forEach(section => {
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(20px)';
-    section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(section);
-});
+    document.querySelectorAll('section:not(.hero)').forEach((section) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition =
+            'opacity 0.6s ease, transform 0.6s ease';
+
+        observer.observe(section);
+    });
+}

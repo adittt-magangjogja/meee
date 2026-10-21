@@ -33,6 +33,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
@@ -115,8 +116,10 @@ body {
 
 /* Hero Section */
 .hero {
-    padding: 100px 0;
-    background-color: var(--bg-secondary);
+    padding: 88px 0;
+    background:
+        radial-gradient(circle at 82% 22%, rgba(37, 99, 235, 0.12), transparent 28rem),
+        var(--bg-secondary);
 }
 
 .hero-animate {
@@ -137,20 +140,48 @@ body {
 .hero .container {
     display: flex;
     align-items: center;
-    gap: 60px;
+    gap: 72px;
 }
 
 .hero-content {
     flex: 1;
+    max-width: 640px;
+}
+
+.hero-content .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background-color: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1.2rem;
+}
+
+.hero-kicker span {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .hero-content h1 {
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 4.6vw, 3.5rem);
     margin-bottom: 0.8rem;
     line-height: 1.2;
 }
 
 .highlight {
+    display: block;
     color: var(--accent);
 }
 
@@ -175,7 +206,7 @@ body {
 
 .btn {
     padding: 12px 28px;
-    border-radius: 8px;
+    border-radius: 10px;
     text-decoration: none;
     font-weight: 600;
     transition: var(--transition);
@@ -185,6 +216,7 @@ body {
 .btn-primary {
     background-color: var(--accent);
     color: white;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
 }
 
 .btn-primary:hover {
@@ -213,8 +245,13 @@ body {
 
 .avatar-wrapper {
     position: relative;
-    width: 280px;
-    height: 280px;
+    width: 360px;
+    height: 360px;
+    max-width: 100%;
+    border-radius: 50%;
+    padding: 8px;
+    background: linear-gradient(135deg, var(--accent), #93c5fd);
+    box-shadow: 0 20px 48px var(--shadow);
 }
 
 .avatar-img {
@@ -233,14 +270,25 @@ body {
 
 /* Section Styles */
 section {
-    padding: 80px 0;
+    padding: 88px 0;
 }
 
 .section-title {
     font-size: 2.3rem;
-    text-align: center;
+    text-align: left;
     margin-bottom: 2.5rem;
     color: var(--text-primary);
+    letter-spacing: -0.03em;
+}
+
+.section-title::after {
+    content: "";
+    display: block;
+    width: 3rem;
+    height: 4px;
+    margin-top: 0.8rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--accent), #93c5fd);
 }
 
 /* About Section */
@@ -250,21 +298,23 @@ section {
 
 .about-grid {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 50px;
+    grid-template-columns: 340px 1fr;
+    gap: 52px;
     align-items: start;
 }
 
 .about-photo-col {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    gap: 1.25rem;
 }
 
 .about-img-frame {
     width: 100%;
-    max-width: 320px;
-    height: 400px;
-    border-radius: 16px;
+    max-width: 340px;
+    height: 420px;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 12px 30px var(--shadow);
     border: 1px solid var(--border);
@@ -275,6 +325,51 @@ section {
     height: 100%;
     object-fit: cover;
     transition: var(--transition);
+}
+
+.about-focus-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--bg-card);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.focus-icon {
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--accent);
+    font-size: 1.15rem;
+}
+
+.focus-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.focus-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.focus-copy strong {
+    color: var(--text-primary);
+    font-size: 1.05rem;
+}
+
+.focus-copy p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
 .about-img:hover {
@@ -288,7 +383,7 @@ section {
 }
 
 .about-intro {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     color: var(--text-secondary);
     line-height: 1.7;
     margin-bottom: 1.8rem;
@@ -298,15 +393,15 @@ section {
 .info-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2.5rem;
+    gap: 1.2rem;
+    margin: 2rem 0 3.5rem;
 }
 
 .info-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.2rem;
+    border-radius: 16px;
+    padding: 1.5rem;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -330,12 +425,12 @@ section {
 }
 
 .info-meta .label {
-    font-size: 0.85rem;
+    font-size: 1rem;
     color: var(--text-secondary);
 }
 
 .info-meta strong {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
 }
 
@@ -355,7 +450,7 @@ section {
     border-left: 2px solid var(--accent);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.8rem;
 }
 
 .timeline-step {
@@ -374,13 +469,13 @@ section {
 }
 
 .step-content h5 {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
     color: var(--text-primary);
     margin-bottom: 0.3rem;
 }
 
 .step-content p {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
     color: var(--text-secondary);
     line-height: 1.5;
 }
@@ -392,17 +487,19 @@ section {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2rem;
+    align-items: stretch;
 }
 
 .project-card {
     background-color: var(--bg-card);
-    border-radius: 12px;
+    border-radius: 18px;
     border: 1px solid var(--border);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    height: 100%;
     transition: var(--transition);
 }
 
@@ -411,9 +508,16 @@ section {
     box-shadow: 0 12px 30px var(--shadow);
 }
 
+.project-card,
+.info-card,
+.skill-category-card,
+.contact-card {
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
 .project-thumb {
     width: 100%;
-    height: 200px;
+    height: 220px;
     overflow: hidden;
     position: relative;
     background-color: var(--border);
@@ -431,7 +535,7 @@ section {
 }
 
 .project-content {
-    padding: 1.8rem;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -445,7 +549,7 @@ section {
 
 .project-content p {
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 1.2rem;
     flex: 1;
@@ -461,7 +565,7 @@ section {
 .tag {
     padding: 4px 10px;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: 600;
 }
 
@@ -512,7 +616,7 @@ section {
     gap: 0.5rem;
     padding: 9px 14px;
     border-radius: 6px;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: 600;
     text-decoration: none;
     transition: var(--transition);
@@ -635,7 +739,7 @@ section {
 }
 
 .contact-subtitle {
-    text-align: center;
+    text-align: left;
     font-size: 1.2rem;
     color: var(--text-secondary);
     margin-bottom: 3rem;
@@ -749,7 +853,7 @@ section {
 .contact-card {
     background-color: var(--bg-card);
     padding: 2rem;
-    border-radius: 12px;
+    border-radius: 16px;
     text-align: center;
     border: 1px solid var(--border);
     text-decoration: none;
@@ -843,17 +947,22 @@ section {
         font-size: 2.2rem;
     }
 
+    .hero-content .hero-kicker {
+        font-size: 0.75rem;
+    }
+
     .hero-content h2 {
         font-size: 1.4rem;
     }
 
     .hero-buttons {
         justify-content: center;
+        flex-wrap: wrap;
     }
 
     .avatar-wrapper {
-        width: 220px;
-        height: 220px;
+        width: 280px;
+        height: 280px;
     }
 
     .about-grid {
